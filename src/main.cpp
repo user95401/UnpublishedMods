@@ -153,11 +153,11 @@ public:
             bg->setID("bg");
             if (loaderMod->getSettingValue<bool>("enable-geode-theme")) {
                 bg->setOpacity(25);
-                bg->setColor(ccColor3B(255, 255, 255));
+                bg->setColor({ 255, 255, 255 });
             }
             else {
                 bg->setOpacity(90);
-                bg->setColor(ccColor3B(0, 0, 0));
+                bg->setColor({ 0, 0, 0 });
             };
             bg->setContentHeight(menu->getContentHeight() - 0.f);
             bg->setContentWidth(menu->getContentWidth() - 6.f);
@@ -189,7 +189,7 @@ public:
             );
             ver->setID("ver");
             ver->setScale(m_bigView ? 0.4 : 0.3f);
-            ver->setColor(ccColor3B(112, 235, 41));
+            ver->setColor({ 112, 235, 41 });
 
             auto name = CCLabelBMFont::create(
                 mod->getName().data(), "bigFont.fnt"
