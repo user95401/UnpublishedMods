@@ -5,7 +5,9 @@ add new button in geode mods menu that shows unpublished mods
 - ability to download unverified mods
 - supports search query and tags
 
-<img src="logo.png" width="150" alt="the mod's logo" />
+<img src="logo.png" width="112" alt="the mod's logo" />
+
+<img src="https://repository-images.githubusercontent.com/837613599/0062f10a-cc7a-4f67-a4ef-57cea1399dea" width="1337" />
 
 mod isn't related to geode team and stuff, u know
 
