@@ -9,7 +9,7 @@ add new button in geode mods menu that shows unpublished mods
 
 <img src="logo.png" width="112" alt="the mod's logo" />
 
-<img src="https://repository-images.githubusercontent.com/837613599/0062f10a-cc7a-4f67-a4ef-57cea1399dea" width="1337" />
+<img src="https://repository-images.githubusercontent.com/837613599/c695114f-8592-43a4-b97c-15accb4e0ace" width="1337" />
 
 mod isn't related to geode team and stuff, u know
 
