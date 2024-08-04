@@ -229,9 +229,10 @@ public:
 
         //go back if no mods
         if (mods.empty()) {
-            pModList->m_pagePrevBtn->setVisible(1);
-            pModList->m_pageNextBtn->setVisible(0);
-            return pModList->m_pagePrevBtn->activate();
+            auto page = unverifiedModsToggle->getTag();
+            page = page - 1;
+            unverifiedModsToggle->setTag(page);
+            return this->resetModsList();
         }
 
         //upd page
@@ -273,7 +274,7 @@ public:
             ->setGap(2.500f)
         );
         
-        pModList->addChild(customList);
+        pModList->addChild(customList, -1);
 
         customList->m_contentLayer->setContentHeight(0.f);
         for (auto mod_entry : mods) {
@@ -302,6 +303,12 @@ public:
                 mod = new Mod(modmeta);
             };
             loaderMod->setLoggingEnabled(1);
+
+            auto installed_mod = Loader::get()->getInstalledMod(mod->getID());
+
+            auto installed = Loader::get()->isModInstalled(mod->getID());
+            auto new_version = not installed_mod
+                ? false : (mod->getVersion() != installed_mod->getVersion());
 
             auto menu = CCMenu::create();
             menu->setLayout(AnchorLayout::create());
@@ -385,14 +392,20 @@ public:
             dev->setAnchorPoint({ 0.f, 0.5f });
             menu->addChild(dev);
 
+            auto viewBtnTexture = (loaderMod->getSettingValue<bool>("enable-geode-theme"))
+                ? "geode.loader/GE_button_05.png" : "GJ_button_01.png";
+            viewBtnTexture = not installed ? "geode.loader/GE_button_01.png" : viewBtnTexture;
+            viewBtnTexture = new_version ? "GJ_button_02.png" : viewBtnTexture;
+
+            ;;;;;;;; auto viewBtnText = "Get";
+            ; viewBtnText = installed ? "View" : viewBtnText;
+            viewBtnText = new_version ? "Update" : viewBtnText;
+
             auto view = CCMenuItemExt::createSpriteExtra(
                 ButtonSprite::create(
-                    "View", "bigFont.fnt",
-                    (loaderMod->getSettingValue<bool>("enable-geode-theme"))
-                    ? "geode.loader/GE_button_05.png" : "GJ_button_01.png"
-                    , 0.70f
+                    viewBtnText, 50.f, 1, "bigFont.fnt", viewBtnTexture, 0.0f, .8f
                 ),
-                [this, mod, mod_entry](auto) {
+                [this, mod, mod_entry, installed, new_version, installed_mod](auto) {
                     geode::openInfoPopup(mod);
                     ModPopup* modPopup = cocos::getChildOfType<ModPopup>(
                         this->getParent(), 0
@@ -400,73 +413,100 @@ public:
                     if (modPopup) {
                         if (auto modLogo = modPopup->getChildByIDRecursive("mod-logo"))
                             ModLogoLoader::attach(mod, modLogo);
-                        CCMenu* fk = cocos::findFirstChildRecursive<CCMenu>(
-                            modPopup->m_mainLayer, [](CCNode* node) {
-                                return nullptr != 
-                                    node->getParent()->getParent()
-                                    ->getChildByID("mod-id-label");
+                        cocos::findFirstChildRecursive<CCMenu>(
+                            modPopup->m_mainLayer, [this, mod, mod_entry, installed](CCMenu* node) {
+                                 auto fk = node->getParent()->getParent()->getChildByID("mod-id-label");
+                                 if (fk) {
+                                     node->removeAllChildrenWithCleanup(0);
+                                     auto dwnloadbtnspr = ButtonSprite::create(
+                                         "                    ", "bigFont.fnt",
+                                         installed ?
+                                         "GJ_button_02.png" :
+                                         "geode.loader/GE_button_01.png",
+                                         0.70f
+                                     );
+                                     dwnloadbtnspr->m_label->setString(Loader::get()->isModInstalled(mod->getID())
+                                         ? "Update" : "Install"
+                                     );
+                                     auto download = CCMenuItemExt::createSpriteExtra(
+                                         dwnloadbtnspr,
+                                         [this, mod, mod_entry, dwnloadbtnspr, node](auto) {
+                                             if (dwnloadbtnspr->m_label->getString() == std::string("Restart Game")) {
+                                                 game::restart();
+                                             }
+                                             auto req = web::WebRequest();
+                                             auto listener = new EventListener<web::WebTask>;
+                                             listener->bind(
+                                                 [this, mod, mod_entry, dwnloadbtnspr, node](web::WebTask::Event* e) {
+                                                     if (not typeinfo_cast<ModsLayer*>(this)) return e->cancel();
+                                                     if (web::WebProgress* prog = e->getProgress()) {
+                                                         node->setTouchEnabled(0);
+                                                         dwnloadbtnspr->m_BGSprite->setVisible(0);
+                                                         dwnloadbtnspr->m_label->setString(fmt::format(
+                                                             "Downloading: {}%",
+                                                             (int)prog->downloadProgress().value_or(0.0)
+                                                         ).data());
+                                                     }
+                                                     if (web::WebResponse* res = e->getValue()) {
+                                                         std::string data = res->string().unwrapOr("no res");
+                                                         if (res->code() < 399) {
+                                                             //save
+                                                             res->into(dirs::getModsDir() / (mod->getID() + ".geode"));
+                                                             //btn
+                                                             node->setTouchEnabled(1);
+                                                             dwnloadbtnspr->m_BGSprite->setVisible(1);
+                                                             dwnloadbtnspr->m_label->setString(
+                                                                 fmt::format("Restart Game").data()
+                                                             );
+                                                             //make geode loader show restart btn
+                                                             loaderMod->enable();
+                                                         }
+                                                         else {
+                                                             auto asd = geode::createQuickPopup(
+                                                                 "Request exception",
+                                                                 data,
+                                                                 "Nah", nullptr, 420.f, nullptr, false
+                                                             );
+                                                             asd->show();
+                                                         };
+                                                     }
+                                                 }
+                                             );
+                                             listener->setFilter(req.send(
+                                                 "GET", mod_entry["versions"][0]["download_link"].as_string()
+                                             ));
+                                         }
+                                     );
+                                     download->m_baseScale = (0.5f);
+                                     download->setScale(download->m_baseScale);
+                                     download->setLayoutOptions(AxisLayoutOptions::create()->setAutoScale(0));
+                                     node->addChild(download);
+                                     node->updateLayout();
+                                     return true;
+                                 };
+                                 return false;
                             }
                         );
-                        if (fk) {
-                            fk->removeAllChildrenWithCleanup(0);
-                            auto dwnloadbtnspr = ButtonSprite::create(
-                                Loader::get()->isModLoaded(mod->getID()) ? 
-                                "     Update     " : 
-                                "    Download    ", 
-                                "bigFont.fnt", 
-                                Loader::get()->isModLoaded(mod->getID()) ? 
-                                "geode.loader/GE_button_01.png" : 
-                                "GJ_button_02.png",
-                                0.60f
-                            );
-                            dwnloadbtnspr->setScale(0.5f);
-                            auto download = CCMenuItemExt::createSpriteExtra(
-                                dwnloadbtnspr,
-                                [this, mod, mod_entry, dwnloadbtnspr](auto) {
-                                    if (dwnloadbtnspr->m_label->getString() == std::string("Restart Game")) {
-                                        game::restart();
+                        cocos::findFirstChildRecursive<CCLabelBMFont>(
+                            modPopup->m_mainLayer, [this, mod, mod_entry, new_version, installed_mod](CCLabelBMFont* node) {
+                                if (node->getString() == std::string("Disabled")) {
+                                    node->setString("");
+                                    //new ver compare
+                                    if (new_version) {
+                                        auto cmpstr = fmt::format(
+                                            "{} -> {}",
+                                            installed_mod->getVersion().toString(),
+                                            mod->getVersion().toString()
+                                        );
+                                        node->setString(cmpstr.data());
+                                        node->setColor({ 99, 255, 100 });
+                                        node->setScale(0.2f);
                                     }
-                                    auto req = web::WebRequest();
-                                    auto listener = new EventListener<web::WebTask>;
-                                    listener->bind(
-                                        [this, mod, mod_entry, dwnloadbtnspr](web::WebTask::Event* e) {
-                                            if (not typeinfo_cast<ModsLayer*>(this)) return e->cancel();
-                                            if (web::WebProgress* prog = e->getProgress()) {
-                                                dwnloadbtnspr->m_label->setString(
-                                                    fmt::format(
-                                                        "Downloading: {}%", 
-                                                        (int)prog->downloadProgress().value_or(0.0)
-                                                    ).data()
-                                                );
-                                            }
-                                            if (web::WebResponse* res = e->getValue()) {
-                                                std::string data = res->string().unwrapOr("no res");
-                                                if (res->code() < 399) {
-                                                    res->into(dirs::getModsDir() / (mod->getID() + ".geode"));
-                                                    dwnloadbtnspr->m_label->setString(
-                                                        fmt::format("Restart Game").data()
-                                                    );
-                                                    loaderMod->enable();
-                                                }
-                                                else {
-                                                    auto asd = geode::createQuickPopup(
-                                                        "Request exception",
-                                                        data,
-                                                        "Nah", nullptr, 420.f, nullptr, false
-                                                    );
-                                                    asd->show();
-                                                };
-                                            }
-                                        }
-                                    );
-                                    listener->setFilter(req.send(
-                                        "GET", mod_entry["versions"][0]["download_link"].as_string()
-                                    ));
+                                    return true;
                                 }
-                            );
-                            fk->addChild(download);
-                            fk->updateLayout();
-                        };
+                                return false;
+                            }
+                        );
                     }
                 }
             );
@@ -475,7 +515,7 @@ public:
                 ->setAnchor(Anchor::Right)
                 ->setOffset({ -28.000f, 0.f })
             );
-            view->setScale(0.5f);
+            view->setScale(0.55f);
             view->m_baseScale = view->getScale();
             menu->addChild(view);
 
@@ -511,6 +551,7 @@ public:
             if (unverifiedModsToggle = typeinfo_cast<CCMenuItemToggler*>(this->getChildByIDRecursive("unverifiedModsToggle"_spr))) void(); else
                 return log::error("{}.unverifiedModsToggle\" = {}", this, unverifiedModsToggle);
         };
+        pModList->removeChildByID("customList"_spr);
         pModList->m_statusContainer->setVisible(true);
         //listener
         auto listener = new EventListener<web::WebTask>;
@@ -595,6 +636,7 @@ public:
                 this->m_goToPageBtn->setVisible(btn->isOn());
                 typeinfo_cast<CCMenu*>(m_tabs[0]->getParent())->setTouchEnabled(btn->isOn());
                 pModList->removeChildByID("customList"_spr);
+                pModList->m_statusContainer->setVisible(false);
                 if (btn->isOn()) return;
                 pModList->m_pagePrevBtn->setVisible(0);
                 pModList->m_pageNextBtn->setVisible(0);
