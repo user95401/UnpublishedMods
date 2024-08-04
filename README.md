@@ -1,9 +1,11 @@
 # UnpublishedMods
 add new button in geode mods menu that shows unpublished mods
 
-- features *"integrated" XD* to geode mods layer
+- featuring *"integrated"* custom ui in geode mods layer
 - ability to download unverified mods
 - supports search query and tags
+
+**unverified mods can has some problems since wasnt checked by geode index admins, mod allows see and download them on your own risk**
 
 <img src="logo.png" width="112" alt="the mod's logo" />
 
