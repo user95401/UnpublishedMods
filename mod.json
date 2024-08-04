@@ -8,7 +8,7 @@
 	},
 	"id": "user95401.unpublished_mods",
 	"name": "Unpublished Mods",
-	"version": "v1.1.0",
+	"version": "v1.2.0",
 	"developer": "user95401",
 	"description": "add new button in geode mods menu that shows unpublished mods",
 	"links": {
@@ -20,5 +20,12 @@
 		"sprites": [
 			"resources/sprites/*.png"
 		]
-	}
+	},
+	"dependencies": [
+		{
+			"id": "geode.node-ids",
+			"version": ">=v1.13.1",
+			"importance": "required"
+		}
+	]
 }
