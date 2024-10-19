@@ -1,20 +1,20 @@
 {
-	"geode": "3.6.1",
+	"geode": "3.8.1",
 	"gd": {
 		"win": "2.206",
 		"android": "2.206",
 		"mac": "2.206",
 		"ios": "2.206"
 	},
-	"id": "user95401.unpublished_mods",
-	"name": "Unpublished Mods",
-	"version": "v1.4.0-beta.1",
+	"id": "user95401.unverified_mods",
+	"name": "Unverified Mods",
+	"version": "v1.4.0",
 	"developer": "user95401",
-	"description": "add new button in geode mods menu that shows unpublished mods",
+	"description": "add new button in geode mods menu that shows unverified mods",
 	"links": {
 		"community": "https://discord.com/invite/9e43WMKzhp",
 		"homepage": "https://geode-sdk.org/mods?status=pending&per_page=10&sort=downloads",
-		"source": "https://github.com/user95401/UnpublishedMods"
+		"source": "https://github.com/user95401/Unverified-Mods"
 	},
 	"resources": {
 		"sprites": [

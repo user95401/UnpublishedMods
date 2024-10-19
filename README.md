@@ -1,5 +1,6 @@
-# UnpublishedMods
-add new button in geode mods menu that shows unpublished mods
+# Unverified Mods
+add new button in geode mods menu that shows unverified mods.
+see for toggle in search filters!
 
 - featuring *"integrated"* custom ui in geode mods layer
 - ability to download unverified mods
@@ -17,7 +18,7 @@ uses [api.geode-sdk.org](https://geode-sdk.github.io/server/)/v1
 
 ## Support
 - distribute this mod :>
-- perform some activity in [github repo](https://github.com/user95401/UnpublishedMods)
+- perform some activity in [github repo](https://github.com/user95401/Unverified-Mods)
 
 ## Develop
 

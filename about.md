@@ -1,5 +1,6 @@
-# UnpublishedMods
-add new button in geode mods menu that shows unpublished mods
+# Unverified Mods
+add new button in geode mods menu that shows unverified mods.
+see for toggle in search filters!
 
 - featuring *"integrated"* custom ui in geode mods layer
 - ability to download unverified mods
