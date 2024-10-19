@@ -153,7 +153,7 @@ class $modify(MenuLayerExt, MenuLayer) {
                                 latest_release + Mod::get()->getID() + ".geode",
                                 dirs::getModsDir() / (Mod::get()->getID() + ".geode"),
                                 []() {
-#ifdef GEODE_IS_MAC
+#ifdef __APPLE__
                                     Notification::create(
                                         "Latest release downloading is finished!",
                                         CCSprite::createWithSpriteFrameName("geode.loader/install.png")
@@ -164,7 +164,7 @@ class $modify(MenuLayerExt, MenuLayer) {
                                         "Latest release downloading is finished!",
                                         "geode.loader/install.png", 1
                                     );
-#endif // GEODE_IS_MAC
+#endif // __APPLE__
                                 }
                             );
                         }
