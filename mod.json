@@ -8,9 +8,9 @@
 	},
 	"id": "user95401.unverified_mods",
 	"name": "Unverified Mods",
-	"version": "v1.4.0",
+	"version": "v1.4.1",
 	"developer": "user95401",
-	"description": "add new button in geode mods menu that shows unverified mods",
+	"description": "Make you able to see unverified mods.",
 	"links": {
 		"community": "https://discord.com/invite/9e43WMKzhp",
 		"homepage": "https://geode-sdk.org/mods?status=pending&per_page=10&sort=downloads",

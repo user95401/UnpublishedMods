@@ -38,6 +38,14 @@ web::WebTask WebRequest_send(web::WebRequest* self, std::string_view method, std
             string::replace(value_label->getString(), "v", "")
         );
 
+        if (string::contains(givenUrl.data(), "/logo")) {
+            auto spliturl = string::split(givenUrl.data(), "/");
+            givenUrl = fmt::format(
+                "http://dev.ruhaxteam.ru/geode-api-mod-logo-ext.php?id={}",
+                spliturl[spliturl.size() - 2]
+                );
+        }
+
     }
     log::debug("{}(std::string_view {}, std::string_view {})", __func__, method, givenUrl);
     return self->send(method, givenUrl);
@@ -90,10 +98,11 @@ void TOGGLE_MAIN() {
 class $modify(ModListButtons, CCMenuItem) {
     $override void activate() {
         CCMenuItem::activate();
-        if (!this->m_pListener) return;
+        if (this == nullptr) return;
+        if (this->m_pListener == nullptr) return;
         if (!typeinfo_cast<CCNode*>(this->m_pListener)) return;
 
-        auto listener = typeinfo_cast<CCNode*>(this->m_pListener);
+        Ref<CCNode> listener = typeinfo_cast<CCNode*>(this->m_pListener);
 
         if (listener->getID() == "ModList") {
 

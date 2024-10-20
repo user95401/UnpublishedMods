@@ -1,3 +1,16 @@
+# 1.4.1
+- fix button activate crash
+- update meta info
+- load mod logos
+
+# 1.4 
+now intercepts web requests and changes them, this leads to:
+- listing mods in the native interface
+- native downloading system
+- more lifeful filtering and sorting
+
+and mod was reneamed to Unverified Mods
+
 # 1.3.0
 - small fixes
 - new vars for view btn: `get`, `update`, `view`

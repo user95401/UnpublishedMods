@@ -1,9 +1,11 @@
 # Unverified Mods
-add new button in geode mods menu that shows unverified mods.
-see for toggle in search filters!
+
+Make you able to see unverified mods.
+
+See for toggle button in search filters! (where tags select goes)
 
 - featuring *"integrated"* custom ui in geode mods layer
-- ability to download unverified mods
+- ability to see and download unverified mods
 - supports search query and tags
 
 **unverified mods can has some problems since wasnt checked by geode index admins, mod allows see and download them on your own risk**
