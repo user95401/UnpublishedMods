@@ -12,7 +12,7 @@ See for toggle button in search filters! (where tags select goes)
 
 <img src="logo.png" width="112" alt="the mod's logo" />
 
-<img src="https://repository-images.githubusercontent.com/837613599/c695114f-8592-43a4-b97c-15accb4e0ace" width="1337" />
+<img src="https://repository-images.githubusercontent.com/837613599/ca205f07-6753-45a7-8bd2-f767306f6336" width="1337" />
 
 mod isn't related to geode team and stuff, u know
 
